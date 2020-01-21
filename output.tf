@@ -1,5 +1,5 @@
 output storage_account_id {
-  value = azurerm_storage_account.vm_boot_diag_sa.id
+  value = azurerm_storage_account.vm_boot_diag_sa.*.id
 }
 
 output azurerm_public_ip_id {
@@ -27,17 +27,17 @@ output azurerm_network_interface_private_vm_id {
 }
 
 output azurerm_virtual_machine_vm_lunix_id {
-  value = azurerm_virtual_machine.vm_lunix.id
+  value = azurerm_virtual_machine.vm_lunix.*.id
 }
 
 output azurerm_virtual_machine_vm_lunix_with_data_disk_id {
-  value = azurerm_virtual_machine.vm_linux_with_data_disk.id
+  value = azurerm_virtual_machine.vm_linux_with_data_disk.*.id
 }
 
 output azurerm_virtual_machine_vm_windows_id {
-  value = azurerm_virtual_machine.vm_lunix.id
+  value = azurerm_virtual_machine.vm_lunix.*.id
 }
 
 output azurerm_virtual_machine_vm_window_with_data_disk_id {
-  value = azurerm_virtual_machine.vm_linux_with_data_disk.id
+  value = azurerm_virtual_machine.vm_linux_with_data_disk.*.id
 }
