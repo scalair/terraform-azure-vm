@@ -183,6 +183,12 @@ variable "default_admin_password" {
   default     = ""
 }
 
+variable "ssh_key" {
+  description = "Default SSH Key to push on the linux VM"
+  type        = string
+  default     = ""
+}
+
 # Default tags
 
 variable "tags" {

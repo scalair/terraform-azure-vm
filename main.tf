@@ -71,7 +71,7 @@ resource "azurerm_virtual_machine" "vm_lunix" {
       path = "/home/${var.default_admin_user}/.ssh/authorized_keys"
       # Should be inherit from vault or other solution such as key vault
       # I would recommend to use env variable to avoid to push the key VCS system !
-      key_data = "${file("${var.ssh_key}")}"
+      key_data = var.ssh_key
     }
   }
 
@@ -130,7 +130,7 @@ resource "azurerm_virtual_machine" "vm_linux_with_data_disk" {
       path = "/home/${var.default_admin_user}/.ssh/authorized_keys"
       # Should be inherit from vault or other solution such as key vault
       # I would recommend to use env variable to avoid to push the key VCS system !
-      key_data = "${file("${var.ssh_key}")}"
+      key_data = var.ssh_key
     }
   }
 

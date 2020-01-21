@@ -1,5 +1,5 @@
 output storage_account_id {
-  value = azuazurerm_storage_account.vm_boot_diag_sa.id
+  value = azurerm_storage_account.vm_boot_diag_sa.id
 }
 
 output azurerm_public_ip_id {
@@ -19,7 +19,7 @@ output azurerm_network_interface_id {
 }
 
 output azurerm_network_interface_private_ip {
-  value = azurerm_network_interface.vm_private_ip.private_ip
+  value = azurerm_network_interface.vm_private_ip.private_ip_address
 }
 
 output azurerm_network_interface_private_vm_id {
