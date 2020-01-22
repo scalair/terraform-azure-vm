@@ -51,6 +51,12 @@ variable "storage_account_type" {
 
 # Virtual machine variables
 
+variable "nb_vm" {
+  description = "Number of VM to create. keep the default value as the VM name is not randon"
+  type        = string
+  default     = "1"
+}
+
 variable "vnet_subnet_id" {
   description = "The subnet id of the virtual network where the virtual machines will reside."
   type        = string
@@ -130,10 +136,10 @@ variable "disable_password_authentication_on_linux" {
   default     = true
 }
 
-variable "public_ip" {
+variable "nb_public_ip" {
   description = "Set to 1 to assign any public IP addresses and 0 if you don't want to assign any public ip."
   type        = string
-  default     = "1"
+  default     = "0"
 }
 
 variable "public_ip_dns" {

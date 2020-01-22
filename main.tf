@@ -10,6 +10,7 @@ resource "azurerm_storage_account" "vm_boot_diag_sa" {
 }
 
 resource "azurerm_public_ip" "vm_public_ip" {
+  count               = var.nb_public_ip
   name                = var.vm_name
   location            = var.location
   resource_group_name = var.resource_group_name
@@ -19,6 +20,7 @@ resource "azurerm_public_ip" "vm_public_ip" {
 }
 
 resource "azurerm_network_interface" "vm_private_ip" {
+  count               = var.nb_vm
   name                = var.vm_name
   location            = var.location
   resource_group_name = var.resource_group_name
@@ -27,18 +29,18 @@ resource "azurerm_network_interface" "vm_private_ip" {
     name                          = var.vm_name
     private_ip_address_allocation = "Dynamic"
     subnet_id                     = var.vnet_subnet_id
-    public_ip_address_id          = length(azurerm_public_ip.vm_public_ip.id) > 0 ? azurerm_public_ip.vm_public_ip.id : ""
+    public_ip_address_id          = length(azurerm_public_ip.vm_public_ip.*.id) > 0 ? element(concat(azurerm_public_ip.vm_public_ip.*.id, list("")), count.index) : ""
   }
 
   tags = var.tags
 }
 
 resource "azurerm_virtual_machine" "vm_lunix" {
-  count                 = var.data_disk == "false" && ((! contains(list(var.vm_os_simple, var.vm_os_offer), "WindowsServer")) || (! contains(list(var.vm_os_simple, var.vm_os_offer), "MicrosoftWindowsDesktop"))) ? 1 : 0
+  count                 = var.data_disk == "false" && (! contains(list(var.vm_os_simple, var.vm_os_offer), "WindowsServer")) && (! contains(list(var.vm_os_simple, var.vm_os_offer), "MicrosoftWindowsDesktop")) ? 1 : 0
   name                  = var.vm_name
   location              = var.location
   resource_group_name   = var.resource_group_name
-  network_interface_ids = [azurerm_network_interface.vm_private_ip.id]
+  network_interface_ids = [element(azurerm_network_interface.vm_private_ip.*.id, count.index)]
   vm_size               = var.vm_size
 
   storage_image_reference {
@@ -84,11 +86,11 @@ resource "azurerm_virtual_machine" "vm_lunix" {
 }
 
 resource "azurerm_virtual_machine" "vm_linux_with_data_disk" {
-  count                 = var.data_disk == "false" && ((! contains(list(var.vm_os_simple, var.vm_os_offer), "WindowsServer")) || (! contains(list(var.vm_os_simple, var.vm_os_offer), "MicrosoftWindowsDesktop"))) ? 1 : 0
+  count                 = var.data_disk == "true" && (! contains(list(var.vm_os_simple, var.vm_os_offer), "WindowsServer")) && (! contains(list(var.vm_os_simple, var.vm_os_offer), "MicrosoftWindowsDesktop")) ? 1 : 0
   name                  = var.vm_name
   location              = var.location
   resource_group_name   = var.resource_group_name
-  network_interface_ids = [azurerm_network_interface.vm_private_ip.id]
+  network_interface_ids = [element(azurerm_network_interface.vm_private_ip.*.id, count.index)]
   vm_size               = var.vm_size
 
   storage_image_reference {
@@ -147,7 +149,7 @@ resource "azurerm_virtual_machine" "vm_windows" {
   name                  = var.vm_name
   location              = var.location
   resource_group_name   = var.resource_group_name
-  network_interface_ids = [azurerm_network_interface.vm_private_ip.id]
+  network_interface_ids = [element(azurerm_network_interface.vm_private_ip.*.id, count.index)]
   vm_size               = var.vm_size
 
   storage_image_reference {
@@ -158,7 +160,7 @@ resource "azurerm_virtual_machine" "vm_windows" {
     version   = var.vm_os_image_id == "" ? var.vm_os_version : ""
   }
 
-  delete_os_disk_on_termination = "${var.delete_os_disk_on_termination}"
+  delete_os_disk_on_termination = var.delete_os_disk_on_termination
 
   storage_os_disk {
     name              = join("-", [var.vm_name, "osdisk"])
@@ -191,7 +193,7 @@ resource "azurerm_virtual_machine" "vm_windows_with_data_disk" {
   name                  = var.vm_name
   location              = var.location
   resource_group_name   = var.resource_group_name
-  network_interface_ids = [azurerm_network_interface.vm_private_ip.id]
+  network_interface_ids = [element(azurerm_network_interface.vm_private_ip.*.id, count.index)]
   vm_size               = var.vm_size
 
   storage_image_reference {

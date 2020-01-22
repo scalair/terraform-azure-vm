@@ -3,27 +3,27 @@ output storage_account_id {
 }
 
 output azurerm_public_ip_id {
-  value = azurerm_public_ip.vm_public_ip.id
+  value = azurerm_public_ip.vm_public_ip.*.id
 }
 
 output azurerm_public_ip {
-  value = azurerm_public_ip.vm_public_ip.ip_address
+  value = azurerm_public_ip.vm_public_ip.*.ip_address
 }
 
 output azurerm_public_ip_fqdn {
-  value = azurerm_public_ip.vm_public_ip.fqdn
+  value = azurerm_public_ip.vm_public_ip.*.fqdn
 }
 
 output azurerm_network_interface_id {
-  value = azurerm_network_interface.vm_private_ip.id
+  value = azurerm_network_interface.vm_private_ip.*.id
 }
 
 output azurerm_network_interface_private_ip {
-  value = azurerm_network_interface.vm_private_ip.private_ip_address
+  value = azurerm_network_interface.vm_private_ip.*.private_ip_address
 }
 
 output azurerm_network_interface_private_vm_id {
-  value = azurerm_network_interface.vm_private_ip.virtual_machine_id
+  value = azurerm_network_interface.vm_private_ip.*.virtual_machine_id
 }
 
 output azurerm_virtual_machine_vm_lunix_id {
