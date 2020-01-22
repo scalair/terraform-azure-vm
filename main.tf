@@ -36,7 +36,7 @@ resource "azurerm_network_interface" "vm_private_ip" {
 }
 
 resource "azurerm_virtual_machine" "vm_lunix" {
-  count                 = var.data_disk == "false" && (! contains(list(var.vm_os_simple, var.vm_os_offer), "WindowsServer")) && (! contains(list(var.vm_os_simple, var.vm_os_offer), "MicrosoftWindowsDesktop")) ? 1 : 0
+  count                 = var.data_disk == "false" && var.is_windows_vm == "false" ? 1 : 0
   name                  = var.vm_name
   location              = var.location
   resource_group_name   = var.resource_group_name
@@ -86,7 +86,7 @@ resource "azurerm_virtual_machine" "vm_lunix" {
 }
 
 resource "azurerm_virtual_machine" "vm_linux_with_data_disk" {
-  count                 = var.data_disk == "true" && (! contains(list(var.vm_os_simple, var.vm_os_offer), "WindowsServer")) && (! contains(list(var.vm_os_simple, var.vm_os_offer), "MicrosoftWindowsDesktop")) ? 1 : 0
+  count                 = var.data_disk == "true" && var.is_windows_vm == "false" ? 1 : 0
   name                  = var.vm_name
   location              = var.location
   resource_group_name   = var.resource_group_name
@@ -145,7 +145,7 @@ resource "azurerm_virtual_machine" "vm_linux_with_data_disk" {
 }
 
 resource "azurerm_virtual_machine" "vm_windows" {
-  count                 = var.is_windows_vm == "true" || contains(list(var.vm_os_simple, var.vm_os_offer), "WindowsServer") && (var.data_disk == "false") ? 1 : 0
+  count                 = var.is_windows_vm == "true" || (contains(list(var.vm_os_simple, var.vm_os_offer), "WindowsServer") || contains(list(var.vm_os_simple, var.vm_os_offer), "MicrosoftWindowsDesktop")) && (var.data_disk == "false") ? 1 : 0
   name                  = var.vm_name
   location              = var.location
   resource_group_name   = var.resource_group_name
@@ -189,7 +189,7 @@ resource "azurerm_virtual_machine" "vm_windows" {
 }
 
 resource "azurerm_virtual_machine" "vm_windows_with_data_disk" {
-  count                 = var.is_windows_vm == "true" || contains(list(var.vm_os_simple, var.vm_os_offer), "WindowsServer") && (var.data_disk == "true") ? 1 : 0
+  count                 = var.is_windows_vm == "true" || (contains(list(var.vm_os_simple, var.vm_os_offer), "WindowsServer") || contains(list(var.vm_os_simple, var.vm_os_offer), "MicrosoftWindowsDesktop")) && (var.data_disk == "true") ? 1 : 0
   name                  = var.vm_name
   location              = var.location
   resource_group_name   = var.resource_group_name
