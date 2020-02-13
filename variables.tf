@@ -148,6 +148,12 @@ variable "public_ip_dns" {
   default     = ""
 }
 
+variable "interface_nsg" {
+  description = "Boolean to specify of a network security group should be created and allocated to the VM network interface"
+  type        = string
+  default     = false
+}
+
 # Disk options
 variable "delete_os_disk_on_termination" {
   description = "Set to true to delete OS disk on vm termination"
