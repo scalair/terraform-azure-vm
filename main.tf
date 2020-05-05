@@ -33,7 +33,6 @@ resource "azurerm_network_interface" "vm_private_ip" {
   name                      = var.vm_name
   location                  = var.location
   resource_group_name       = var.resource_group_name
-  network_security_group_id = var.interface_nsg == "true" ? element(azurerm_network_security_group.vm_private_ip_nsg.*.id, count.index) : ""
 
   ip_configuration {
     name                          = var.vm_name
@@ -43,6 +42,13 @@ resource "azurerm_network_interface" "vm_private_ip" {
   }
 
   tags = var.tags
+}
+
+resource "azurerm_network_interface_security_group_association" "nsg_association" {
+  count = var.interface_nsg == "true" ? var.nb_vm : 0
+
+  network_interface_id      = azurerm_network_interface.vm_private_ip[count.index].id
+  network_security_group_id = element(azurerm_network_security_group.vm_private_ip_nsg.*.id, count.index)
 }
 
 
