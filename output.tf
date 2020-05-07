@@ -18,6 +18,10 @@ output azurerm_network_interface_id {
   value = azurerm_network_interface.vm_private_ip.*.id
 }
 
+output azurerm_network_interface_ip_configuration_name {
+  value = azurerm_network_interface.vm_private_ip.*.ip_configuration.name
+}
+
 output azurerm_network_interface_private_ip {
   value = azurerm_network_interface.vm_private_ip.*.private_ip_address
 }
