@@ -19,7 +19,7 @@ output azurerm_network_interface_id {
 }
 
 output azurerm_network_interface_ip_configuration_name {
-  value = azurerm_network_interface.vm_private_ip.*.ip_configuration.name
+  value = var.vm_name
 }
 
 output azurerm_network_interface_private_ip {
