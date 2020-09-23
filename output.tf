@@ -26,18 +26,18 @@ output azurerm_network_interface_private_vm_id {
   value = azurerm_network_interface.vm_private_ip.*.virtual_machine_id
 }
 
-output azurerm_virtual_machine_vm_lunix_id {
-  value = azurerm_virtual_machine.vm_lunix.*.id
+output azurerm_virtual_machine_vm_linux_id {
+  value = azurerm_virtual_machine.vm_linux.*.id
 }
 
-output azurerm_virtual_machine_vm_lunix_with_data_disk_id {
+output azurerm_virtual_machine_vm_linux_with_data_disk_id {
   value = azurerm_virtual_machine.vm_linux_with_data_disk.*.id
 }
 
 output azurerm_virtual_machine_vm_windows_id {
-  value = azurerm_virtual_machine.vm_lunix.*.id
+  value = azurerm_virtual_machine.vm_windows.*.id
 }
 
 output azurerm_virtual_machine_vm_window_with_data_disk_id {
-  value = azurerm_virtual_machine.vm_linux_with_data_disk.*.id
+  value = azurerm_virtual_machine.vm_windows_with_data_disk.*.id
 }

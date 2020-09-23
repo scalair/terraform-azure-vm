@@ -33,7 +33,6 @@ resource "azurerm_network_interface" "vm_private_ip" {
   name                      = var.vm_name
   location                  = var.location
   resource_group_name       = var.resource_group_name
-  network_security_group_id = var.interface_nsg == "true" ? element(azurerm_network_security_group.vm_private_ip_nsg.*.id, count.index) : ""
 
   ip_configuration {
     name                          = var.vm_name
@@ -45,8 +44,14 @@ resource "azurerm_network_interface" "vm_private_ip" {
   tags = var.tags
 }
 
+resource "azurerm_network_interface_security_group_association" "network_interface_sg_assoc" {
+  count = var.interface_nsg == "true" ? 1 : 0
+  network_interface_id      = azurerm_network_interface.vm_private_ip[count.index].id
+  network_security_group_id = azurerm_network_security_group.vm_private_ip_nsg[count.index].id
+}
 
-resource "azurerm_virtual_machine" "vm_lunix" {
+
+resource "azurerm_virtual_machine" "vm_linux" {
   count                 = var.data_disk == "false" && var.is_windows_vm == "false" ? 1 : 0
   name                  = var.vm_name
   location              = var.location
@@ -80,17 +85,20 @@ resource "azurerm_virtual_machine" "vm_lunix" {
   os_profile_linux_config {
     disable_password_authentication = var.disable_password_authentication_on_linux
 
-    ssh_keys {
-      path = "/home/${var.default_admin_user}/.ssh/authorized_keys"
-      # Should be inherit from vault or other solution such as key vault
-      # I would recommend to use env variable to avoid to push the key VCS system !
-      key_data = var.ssh_key
+    dynamic "ssh_keys" {
+      for_each = var.ssh_key == "" ? [] : [var.ssh_key]
+      content {
+        path = "/home/${var.default_admin_user}/.ssh/authorized_keys"
+        # Should be inherit from vault or other solution such as key vault
+        # I would recommend to use env variable to avoid to push the key VCS system !
+        key_data = ssh_keys.value
+      }
     }
   }
 
   boot_diagnostics {
     enabled     = var.boot_diagnostics
-    storage_uri = var.boot_diagnostics == "true" && var.sa_name == "" ? join(",", azurerm_storage_account.vm_boot_diag_sa.*.primary_blob_endpoint) : "https://${var.sa_name}.blob.core.windows.net/"
+    storage_uri = var.boot_diagnostics == "true" && var.sa_name == "" ? join(",", azurerm_storage_account.vm_boot_diag_sa.*.primary_blob_endpoint) : "https://${var.vm_name}.blob.core.windows.net/"
   }
 
   tags = var.tags
@@ -139,17 +147,20 @@ resource "azurerm_virtual_machine" "vm_linux_with_data_disk" {
   os_profile_linux_config {
     disable_password_authentication = var.disable_password_authentication_on_linux
 
-    ssh_keys {
-      path = "/home/${var.default_admin_user}/.ssh/authorized_keys"
-      # Should be inherit from vault or other solution such as key vault
-      # I would recommend to use env variable to avoid to push the key VCS system !
-      key_data = var.ssh_key
+    dynamic "ssh_keys" {
+      for_each = var.ssh_key == "" ? [] : [var.ssh_key]
+      content {
+        path = "/home/${var.default_admin_user}/.ssh/authorized_keys"
+        # Should be inherit from vault or other solution such as key vault
+        # I would recommend to use env variable to avoid to push the key VCS system !
+        key_data = ssh_keys.value
+      }
     }
   }
 
   boot_diagnostics {
     enabled     = var.boot_diagnostics
-    storage_uri = var.boot_diagnostics == "true" && var.sa_name == "" ? join(",", azurerm_storage_account.vm_boot_diag_sa.*.primary_blob_endpoint) : "https://${var.sa_name}.blob.core.windows.net/"
+    storage_uri = var.boot_diagnostics == "true" && var.sa_name == "" ? join(",", azurerm_storage_account.vm_boot_diag_sa.*.primary_blob_endpoint) : "https://${var.vm_name}.blob.core.windows.net/"
   }
 
   tags = var.tags
@@ -194,7 +205,7 @@ resource "azurerm_virtual_machine" "vm_windows" {
 
   boot_diagnostics {
     enabled     = var.boot_diagnostics
-    storage_uri = var.boot_diagnostics == "true" && var.sa_name == "" ? join(",", azurerm_storage_account.vm_boot_diag_sa.*.primary_blob_endpoint) : "https://${var.sa_name}.blob.core.windows.net/"
+    storage_uri = var.boot_diagnostics == "true" && var.sa_name == "" ? join(",", azurerm_storage_account.vm_boot_diag_sa.*.primary_blob_endpoint) : "https://${var.vm_name}.blob.core.windows.net/"
   }
 
   tags = var.tags
@@ -248,7 +259,7 @@ resource "azurerm_virtual_machine" "vm_windows_with_data_disk" {
 
   boot_diagnostics {
     enabled     = var.boot_diagnostics
-    storage_uri = var.boot_diagnostics == "true" && var.sa_name == "" ? join(",", azurerm_storage_account.vm_boot_diag_sa.*.primary_blob_endpoint) : "https://${var.sa_name}.blob.core.windows.net/"
+    storage_uri = var.boot_diagnostics == "true" && var.sa_name == "" ? join(",", azurerm_storage_account.vm_boot_diag_sa.*.primary_blob_endpoint) : "https://${var.vm_name}.blob.core.windows.net/"
   }
 
   tags = var.tags
