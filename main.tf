@@ -98,7 +98,7 @@ resource "azurerm_virtual_machine" "vm_linux" {
 
   boot_diagnostics {
     enabled     = var.boot_diagnostics
-    storage_uri = var.boot_diagnostics == "true" && var.sa_name == "" ? join(",", azurerm_storage_account.vm_boot_diag_sa.*.primary_blob_endpoint) : "https://${var.sa_name}.blob.core.windows.net/"
+    storage_uri = var.boot_diagnostics == "true" && var.sa_name == "" ? join(",", azurerm_storage_account.vm_boot_diag_sa.*.primary_blob_endpoint) : "https://${var.vm_name}.blob.core.windows.net/"
   }
 
   tags = var.tags
@@ -205,7 +205,7 @@ resource "azurerm_virtual_machine" "vm_windows" {
 
   boot_diagnostics {
     enabled     = var.boot_diagnostics
-    storage_uri = var.boot_diagnostics == "true" && var.sa_name == "" ? join(",", azurerm_storage_account.vm_boot_diag_sa.*.primary_blob_endpoint) : "https://${var.sa_name}.blob.core.windows.net/"
+    storage_uri = var.boot_diagnostics == "true" && var.sa_name == "" ? join(",", azurerm_storage_account.vm_boot_diag_sa.*.primary_blob_endpoint) : "https://${var.vm_name}.blob.core.windows.net/"
   }
 
   tags = var.tags
@@ -259,7 +259,7 @@ resource "azurerm_virtual_machine" "vm_windows_with_data_disk" {
 
   boot_diagnostics {
     enabled     = var.boot_diagnostics
-    storage_uri = var.boot_diagnostics == "true" && var.sa_name == "" ? join(",", azurerm_storage_account.vm_boot_diag_sa.*.primary_blob_endpoint) : "https://${var.sa_name}.blob.core.windows.net/"
+    storage_uri = var.boot_diagnostics == "true" && var.sa_name == "" ? join(",", azurerm_storage_account.vm_boot_diag_sa.*.primary_blob_endpoint) : "https://${var.vm_name}.blob.core.windows.net/"
   }
 
   tags = var.tags
